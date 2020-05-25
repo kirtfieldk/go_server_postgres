@@ -1,6 +1,7 @@
 package lp_routes
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -10,13 +11,13 @@ import (
 )
 
 type Order struct {
-	Person  string
-	Age     int32
-	Loyalty string
+	Person  string `json: person`
+	Age     int32  `json: age`
+	Loyalty string `json: loyalty`
 }
 type Company struct {
-	Name     string
-	Buisness string
+	Name     string `json: name`
+	Buisness string `json:buisness`
 }
 
 func MainPage(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +26,6 @@ func MainPage(w http.ResponseWriter, r *http.Request) {
 
 /* Rrading and recieving JSON */
 func SearchRoute(w http.ResponseWriter, r *http.Request) {
-
 	var order Order
 	err := helpers.DecodeJsonBody(w, r, &order)
 	if err != nil {
@@ -38,7 +38,17 @@ func SearchRoute(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "Person: %+v", order)
 	fmt.Printf("%s", order.Person)
 
+}
+
+/* Write Json */
+func AddOrder(w http.ResponseWriter, r *http.Request) {
+	o1 := Order{"Keith Kirtfield", 22, "Platinum"}
+	o1Json, err := json.Marshal(o1)
+	if err != nil {
+		fmt.Println("Error")
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(o1Json)
 }
