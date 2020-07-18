@@ -3,7 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 
+	"github.com/keithkfield/pg_api/database"
+	"github.com/keithkfield/pg_api/lp_routes"
 	_ "github.com/lib/pq"
 )
 
@@ -29,23 +33,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	makeTables(db)
-	// http.HandleFunc("/", lp_routes.MainPage)
-	// http.HandleFunc("/search", lp_routes.SearchRoute)
-	// http.HandleFunc("/order", lp_routes.AddOrder)
-	// log.Fatal(http.ListenAndServe(":8080", nil))
-}
-
-func makeTables(db *sql.DB) {
-	stm := `CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  age INT,
-  first_name TEXT,
-  last_name TEXT,
-  email TEXT UNIQUE NOT NULL
-);`
-	_, err := db.Exec(stm)
-	if err != nil {
-		panic(err)
-	}
+	database.BuildTables(db)
+	http.HandleFunc("/", lp_routes.MainPage)
+	http.HandleFunc("/search", lp_routes.SearchRoute)
+	http.HandleFunc("/order", lp_routes.AddOrder)
+	http.HandleFunc("/api/v1/users", lp_routes.UsersRoute)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

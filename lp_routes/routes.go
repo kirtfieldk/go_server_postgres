@@ -11,13 +11,17 @@ import (
 )
 
 type Order struct {
-	Person  string `json: person`
-	Age     int32  `json: age`
-	Loyalty string `json: loyalty`
+	Person  string `json:"person"`
+	Age     int32  `json:"age"`
+	Loyalty string `json:"loyalty"`
 }
 type Company struct {
-	Name     string `json: name`
-	Buisness string `json:buisness`
+	Name     string `json:"name"`
+	Buisness string `json:"buisness"`
+}
+type Users struct {
+	User_id string `json:"user_id"`
+	Name    string `json:"name"`
 }
 
 func MainPage(w http.ResponseWriter, r *http.Request) {
@@ -51,4 +55,21 @@ func AddOrder(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(o1Json)
+}
+
+func UsersRoute(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	user := []Users{
+		{User_id: "P840283", Name: "Keith Kirtfield"},
+		{User_id: "P840283", Name: "Keith Kirtfield"},
+	}
+	o1Json, err := json.Marshal(user)
+	if err != nil {
+		panic(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(o1Json)
+}
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
